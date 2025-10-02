@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=fastinvestdb'
+      - 'MYSQL_PASSWORD=WSrt23)01@qwepoi'
+      - 'MYSQL_ROOT_PASSWORD=WSrt23)01@qwepoi'
+      - 'MYSQL_USER=root'
+    ports:
+      - '3306'
