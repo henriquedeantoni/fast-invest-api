@@ -28,6 +28,7 @@ public class InvestorController {
 
     @GetMapping("/{investorId}")
     public ResponseEntity<Investor> getInvestorById(@PathVariable("investorId") String id){
-        return null;
+        var investor = investorService.getInvestorById(id);
+        return investor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

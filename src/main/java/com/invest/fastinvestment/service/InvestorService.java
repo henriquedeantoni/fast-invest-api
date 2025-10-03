@@ -6,6 +6,7 @@ import com.invest.fastinvestment.repository.InvestorRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,7 +21,7 @@ public class InvestorService {
     public UUID createInvestor(CreateInvestorDto dto) {
 
         var entity =  new Investor(
-                UUID.randomUUID(),
+                null,
                 dto.username(),
                 dto.email(),
                 dto.password(),
@@ -31,5 +32,9 @@ public class InvestorService {
         var investorSaved = investorRepository.save(entity);
 
         return investorSaved.getInvestorId();
+    }
+
+    public Optional<Investor> getInvestorById(String investorId) {
+        return investorRepository.findById(UUID.fromString(investorId));
     }
 }
