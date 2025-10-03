@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,5 +31,11 @@ public class InvestorController {
     public ResponseEntity<Investor> getInvestorById(@PathVariable("investorId") String id){
         var investor = investorService.getInvestorById(id);
         return investor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Investor>> getAllInvestors(){
+        var list = investorService.getAllInvestors();
+        return ResponseEntity.ok().body(list);
     }
 }

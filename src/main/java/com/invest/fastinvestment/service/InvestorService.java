@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,5 +37,9 @@ public class InvestorService {
 
     public Optional<Investor> getInvestorById(String investorId) {
         return investorRepository.findById(UUID.fromString(investorId));
+    }
+
+    public List<Investor> getAllInvestors() {
+        return investorRepository.findAll();
     }
 }
