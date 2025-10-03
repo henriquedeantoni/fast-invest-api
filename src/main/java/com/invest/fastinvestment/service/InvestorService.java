@@ -20,7 +20,7 @@ public class InvestorService {
     public UUID createInvestor(CreateInvestorDto dto) {
 
         var entity =  new Investor(
-                UUID.randomUUID(),
+                null,
                 dto.username(),
                 dto.email(),
                 dto.password(),

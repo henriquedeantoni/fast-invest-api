@@ -13,6 +13,7 @@ public class Investor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "investor_id", columnDefinition = "CHAR(36)", updatable = false, nullable = false)
     private UUID investorId;
 
     @Column(name = "username")
