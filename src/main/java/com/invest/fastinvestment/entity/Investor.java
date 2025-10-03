@@ -33,6 +33,10 @@ public class Investor {
     @UpdateTimestamp
     private Instant updateTimestamp;
 
+    public Investor() {
+
+    }
+
     public Investor(UUID investorId, String username, String email, String password, String name, Instant creationTimestamp, Instant updateTimestamp) {
         this.investorId = investorId;
         this.username = username;
