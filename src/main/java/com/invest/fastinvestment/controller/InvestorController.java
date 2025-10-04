@@ -38,4 +38,19 @@ public class InvestorController {
         var list = investorService.getAllInvestors();
         return ResponseEntity.ok().body(list);
     }
+
+    @PutMapping("/{investorId}")
+    public ResponseEntity<Investor> updateInvestorById(
+            @PathVariable("investorId") String investorId,
+            @RequestBody UpdateInvestorDto updateInvestorDto){
+
+            investorService.updateInvestorById(investorId, updateInvestorDto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{investorId}")
+    public ResponseEntity<Investor> deleteInvestorById(@PathVariable("investorId") String investorId){
+        investorService.deleteInvestorById(investorId);
+        return ResponseEntity.noContent().build();
+    }
 }
