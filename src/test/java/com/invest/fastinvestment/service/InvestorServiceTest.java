@@ -12,20 +12,19 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InvestorServiceTest {
@@ -159,6 +158,99 @@ class InvestorServiceTest {
             //Assert
             assertTrue(output.isEmpty());
             assertEquals(investorId, uuidArgumentCaptor.getValue());
+        }
+    }
+
+    @Nested
+    class listAllInvestors{
+
+        @Test
+        @DisplayName("Should list all investor list with success")
+        void shouldListAllInvestorsWithSuccess() {
+
+            //Arrange
+            List<Investor> investorList = new ArrayList<>();
+
+            investorList.add(new Investor(
+                    UUID.randomUUID(),
+                    "username",
+                    "myemail@email.com",
+                    "pass",
+                    "Investor Name",
+                    Instant.now(),
+                    null
+            ));
+
+            investorList.add(new Investor(
+                    UUID.randomUUID(),
+                    "username2",
+                    "myemail2@email.com",
+                    "pass2",
+                    "Investor Name 2",
+                    Instant.now(),
+                    null
+            ));
+
+            doReturn(investorList)
+                    .when(investorRepository)
+                    .findAll();
+
+            //Act
+            var output = investorService.getAllInvestors();
+
+            //Assert
+            assertNotNull(output);
+            assertEquals(investorList.size(), output.size());
+        }
+    }
+
+    @Nested
+    class deleteById{
+
+        @Test
+        @DisplayName("Should delete investor by id with success, when investor user exists")
+        void shouldDeleteInvestorByIdWithSuccessWhenInvestorExists() {
+            //Arrange
+            doReturn(true)
+                    .when(investorRepository)
+                    .existsById(uuidArgumentCaptor.capture());
+
+            doNothing()
+                    .when(investorRepository)
+                    .deleteById(uuidArgumentCaptor.capture());
+
+            var investorId = UUID.randomUUID();
+
+            //Act
+            investorService.deleteInvestorById(investorId.toString());
+
+            //Assert
+            var idList = uuidArgumentCaptor.getAllValues();
+            assertEquals(investorId, idList.get(0));
+            assertEquals(investorId, idList.get(1));
+
+            verify(investorRepository, times(1)).existsById(idList.get(0));
+            verify(investorRepository, times(1)).deleteById(idList.get(1));
+        }
+
+        @Test
+        @DisplayName("Should Not delete investor when it doesnt exist")
+        void shouldNotDeleteInvestorWhenNotExists() {
+            //Arrange
+            doReturn(false)
+                    .when(investorRepository)
+                    .existsById(uuidArgumentCaptor.capture());
+
+            var investorId = UUID.randomUUID();
+
+            //Act
+            investorService.deleteInvestorById(investorId.toString());
+
+            //Assert
+            assertEquals(investorId, uuidArgumentCaptor.getValue());
+
+            verify(investorRepository, times(1)).existsById(uuidArgumentCaptor.getValue());
+            verify(investorRepository, times(0)).deleteById(any());
         }
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class InvestorService {
+public class    InvestorService {
 
     private InvestorRepository investorRepository;
 
@@ -71,9 +71,10 @@ public class InvestorService {
     }
 
     public void deleteInvestorById(String investorId) {
-        var investorExists = investorRepository.existsById(UUID.fromString(investorId));
+        var id = UUID.fromString(investorId);
+        var investorExists = investorRepository.existsById(id);
         if (investorExists) {
-            investorRepository.deleteById(UUID.fromString(investorId));
+            investorRepository.deleteById(id);
         }
     }
 
