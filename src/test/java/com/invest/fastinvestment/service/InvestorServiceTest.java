@@ -208,12 +208,12 @@ class InvestorServiceTest {
     class deleteById{
 
         @Test
-        @DisplayName("Should delete investor by id with success.")
-        void shouldDeleteInvestorByIdWithSuccess() {
+        @DisplayName("Should delete investor by id with success, when investor user exists")
+        void shouldDeleteInvestorByIdWithSuccessWhenInvestorExists() {
             //Arrange
             doReturn(true)
                     .when(investorRepository)
-                            .existsById(uuidArgumentCaptor.capture());
+                    .existsById(uuidArgumentCaptor.capture());
 
             doNothing()
                     .when(investorRepository)
@@ -231,6 +231,26 @@ class InvestorServiceTest {
 
             verify(investorRepository, times(1)).existsById(idList.get(0));
             verify(investorRepository, times(1)).deleteById(idList.get(1));
+        }
+
+        @Test
+        @DisplayName("Should Not delete investor when it doesnt exist")
+        void shouldNotDeleteInvestorWhenNotExists() {
+            //Arrange
+            doReturn(false)
+                    .when(investorRepository)
+                    .existsById(uuidArgumentCaptor.capture());
+
+            var investorId = UUID.randomUUID();
+
+            //Act
+            investorService.deleteInvestorById(investorId.toString());
+
+            //Assert
+            assertEquals(investorId, uuidArgumentCaptor.getValue());
+
+            verify(investorRepository, times(1)).existsById(uuidArgumentCaptor.getValue());
+            verify(investorRepository, times(0)).deleteById(any());
         }
     }
 }
