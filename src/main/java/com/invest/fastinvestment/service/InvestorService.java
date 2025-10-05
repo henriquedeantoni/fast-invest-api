@@ -3,6 +3,7 @@ package com.invest.fastinvestment.service;
 import com.invest.fastinvestment.controller.CreateInvestorDto;
 import com.invest.fastinvestment.controller.UpdateInvestorDto;
 import com.invest.fastinvestment.entity.Investor;
+import com.invest.fastinvestment.exceptions.InvestorCreationException;
 import com.invest.fastinvestment.repository.InvestorRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +23,22 @@ public class InvestorService {
 
     public UUID createInvestor(CreateInvestorDto dto) {
 
-        var entity =  new Investor(
-                null,
-                dto.username(),
-                dto.email(),
-                dto.password(),
-                dto.name(),
-                Instant.now(),
-                null);
+        try{
+            var entity =  new Investor(
+                    null,
+                    dto.username(),
+                    dto.email(),
+                    dto.password(),
+                    dto.name(),
+                    Instant.now(),
+                    null);
 
-        var investorSaved = investorRepository.save(entity);
+            var investorSaved = investorRepository.save(entity);
 
-        return investorSaved.getInvestorId();
+            return investorSaved.getInvestorId();
+        } catch(Exception e) {
+            throw new InvestorCreationException("Failed to create investor user", e);
+        }
     }
 
     public Optional<Investor> getInvestorById(String investorId) {

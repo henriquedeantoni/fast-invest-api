@@ -2,6 +2,7 @@ package com.invest.fastinvestment.service;
 
 import com.invest.fastinvestment.controller.CreateInvestorDto;
 import com.invest.fastinvestment.entity.Investor;
+import com.invest.fastinvestment.exceptions.InvestorCreationException;
 import com.invest.fastinvestment.repository.InvestorRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,14 +12,18 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -33,6 +38,9 @@ class InvestorServiceTest {
 
     @Captor
     private ArgumentCaptor<Investor> investorArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     @Nested
     class createInvestor{
@@ -75,15 +83,82 @@ class InvestorServiceTest {
         void shouldThrownAnExceptionWhenErrorOccurs() {
 
             //Arrange
-
-            doThrow(new RuntimeException()).when(investorRepository).save(any());
             var input = new CreateInvestorDto(
-                    "felipezan",
-                    "felipezanatta@gmail.com",
-                    "82sq8wF@",
-                    "Felipe Zanatta");
-            //Act & Assert
-            assertThrows(RuntimeException.class, () -> investorService.createInvestor(input));
+                    "joanadarc",
+                    "joanadarc@yahoo.com",
+                    "2882wsh28",
+                    "Joan Darc"
+            );
+
+            doThrow(new RuntimeException("Database error"))
+            .when(investorRepository).save(argThat(investor ->
+                                investor.getEmail().equals(input.email()) &&
+                                investor.getUsername().equals(input.username())
+                            ));
+
+            // Act & Assert
+            var exception = assertThrows(
+                    InvestorCreationException.class,
+                    () -> investorService.createInvestor(input)
+            );
+            assertEquals("Failed to create investor user", exception.getMessage());
+            assertTrue(exception.getCause() instanceof RuntimeException);
+            assertEquals("Database error", exception.getCause().getMessage());
+
+
+            verify(investorRepository, times(1)).save(argThat(investor ->
+                    investor.getEmail().equals(input.email()) &&
+                            investor.getUsername().equals(input.username())
+            ));
+        }
+    }
+
+    @Nested
+    class getInvestorById{
+
+        @Test
+        @DisplayName("Should get investor by Id with success. Optional is present case. ")
+        void shouldGetInvestorByIdWithSuccessOptionalPresent() {
+
+            //Arrange
+            var investor = new Investor(
+                    UUID.randomUUID(),
+                    "username",
+                    "myemail@email.com",
+                    "pass",
+                    "Investor Name",
+                    Instant.now(),
+                    null
+            );
+            doReturn(Optional.of(investor))
+                    .when(investorRepository)
+                    .findById(uuidArgumentCaptor
+                            .capture());
+
+            //Act
+            var output =  investorService.getInvestorById(investor.getInvestorId().toString());
+
+            //Assert
+            assertTrue(output.isPresent());
+            assertEquals(investor.getInvestorId(), uuidArgumentCaptor.getValue());
+        }
+
+        @Test
+        @DisplayName("Should get investor by Id with success. Optional is not present case. ")
+        void shouldGetInvestorByIdWithSuccessOptionalNotPresent() {
+
+            //Arrange
+            var investorId = UUID.randomUUID();
+            doReturn(Optional.empty())
+                    .when(investorRepository)
+                    .findById(uuidArgumentCaptor.capture());
+
+            //Act
+            var output =  investorService.getInvestorById(investorId.toString());
+
+            //Assert
+            assertTrue(output.isEmpty());
+            assertEquals(investorId, uuidArgumentCaptor.getValue());
         }
     }
 }
