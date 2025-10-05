@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,6 +38,9 @@ class InvestorServiceTest {
 
     @Captor
     private ArgumentCaptor<Investor> investorArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     @Nested
     class createInvestor{
@@ -106,6 +110,55 @@ class InvestorServiceTest {
                     investor.getEmail().equals(input.email()) &&
                             investor.getUsername().equals(input.username())
             ));
+        }
+    }
+
+    @Nested
+    class getInvestorById{
+
+        @Test
+        @DisplayName("Should get investor by Id with success. Optional is present case. ")
+        void shouldGetInvestorByIdWithSuccessOptionalPresent() {
+
+            //Arrange
+            var investor = new Investor(
+                    UUID.randomUUID(),
+                    "username",
+                    "myemail@email.com",
+                    "pass",
+                    "Investor Name",
+                    Instant.now(),
+                    null
+            );
+            doReturn(Optional.of(investor))
+                    .when(investorRepository)
+                    .findById(uuidArgumentCaptor
+                            .capture());
+
+            //Act
+            var output =  investorService.getInvestorById(investor.getInvestorId().toString());
+
+            //Assert
+            assertTrue(output.isPresent());
+            assertEquals(investor.getInvestorId(), uuidArgumentCaptor.getValue());
+        }
+
+        @Test
+        @DisplayName("Should get investor by Id with success. Optional is not present case. ")
+        void shouldGetInvestorByIdWithSuccessOptionalNotPresent() {
+
+            //Arrange
+            var investorId = UUID.randomUUID();
+            doReturn(Optional.empty())
+                    .when(investorRepository)
+                    .findById(uuidArgumentCaptor.capture());
+
+            //Act
+            var output =  investorService.getInvestorById(investorId.toString());
+
+            //Assert
+            assertTrue(output.isEmpty());
+            assertEquals(investorId, uuidArgumentCaptor.getValue());
         }
     }
 }
