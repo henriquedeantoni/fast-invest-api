@@ -1,6 +1,7 @@
 package com.invest.fastinvestment.service;
 
 import com.invest.fastinvestment.controller.CreateInvestorDto;
+import com.invest.fastinvestment.controller.UpdateInvestorDto;
 import com.invest.fastinvestment.entity.Investor;
 import com.invest.fastinvestment.exceptions.InvestorCreationException;
 import com.invest.fastinvestment.repository.InvestorRepository;
@@ -256,11 +257,19 @@ class InvestorServiceTest {
 
     @Nested
     class updateInvestorById{
+
         @Test
-        @DisplayName("Should get investor by Id with success. Optional is present case. ")
-        void shouldGetInvestorByIdWithSuccessOptionalPresent() {
+        @DisplayName("Should update investor user by Id when user exists, username and password is filled. ")
+        void shouldUpdateInvestorByIdWhenUserExistsAndUsernameAndPasswordIsFilled() {
 
             //Arrange
+            var updateInvestorDto = new UpdateInvestorDto(
+                    "newUsername",
+                        "newpass",
+                    "newemail@email.com",
+                    "Investor Name"
+            );
+
             var investor = new Investor(
                     UUID.randomUUID(),
                     "username",
@@ -274,13 +283,62 @@ class InvestorServiceTest {
                     .when(investorRepository)
                     .findById(uuidArgumentCaptor
                             .capture());
+            doReturn(investor)
+                    .when(investorRepository)
+                    .save(investorArgumentCaptor.capture());
 
             //Act
-            var output =  investorService.getInvestorById(investor.getInvestorId().toString());
+            investorService.updateInvestorById(investor.getInvestorId().toString(), updateInvestorDto);
 
             //Assert
-            assertTrue(output.isPresent());
             assertEquals(investor.getInvestorId(), uuidArgumentCaptor.getValue());
+
+            var investorCaptured = investorArgumentCaptor.getValue();
+
+            assertEquals(investor.getUsername(), investorCaptured.getUsername());
+            assertEquals(investor.getPassword(), investorCaptured.getPassword());
+            assertEquals(investor.getEmail(), investorCaptured.getEmail());
+            assertEquals(investor.getName(), investorCaptured.getName());
+
+            verify(investorRepository, times(1)).findById(uuidArgumentCaptor.getValue());
+            verify(investorRepository, times(1)).save(investor);
+        }
+
+        @Test
+        @DisplayName("Should not update investor user by Id when user not exists. ")
+        void shouldNotUpdateInvestorByIdWhenUserNotExist() {
+
+            //Arrange
+            var updateInvestorDto = new UpdateInvestorDto(
+                    "newUsername",
+                    "newpass",
+                    "newemail@email.com",
+                    "Investor Name"
+            );
+
+            var investor = new Investor(
+                    UUID.randomUUID(),
+                    "username",
+                    "myemail@email.com",
+                    "pass",
+                    "Investor Name",
+                    Instant.now(),
+                    null
+            );
+            var investorId = UUID.randomUUID();
+            doReturn(Optional.empty())
+                    .when(investorRepository)
+                    .findById(uuidArgumentCaptor
+                            .capture());
+
+            //Act
+            investorService.updateInvestorById(investorId.toString(), updateInvestorDto);
+
+            //Assert
+            assertEquals(investorId, uuidArgumentCaptor.getValue());
+
+            verify(investorRepository, times(1)).findById(uuidArgumentCaptor.getValue());
+            verify(investorRepository, times(0)).save(any());
         }
     }
 }
