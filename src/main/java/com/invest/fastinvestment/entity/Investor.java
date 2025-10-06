@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -33,6 +34,9 @@ public class Investor {
 
     @UpdateTimestamp
     private Instant updateTimestamp;
+
+    @OneToMany(mappedBy="investor")
+    private List<Account> accounts;
 
     public Investor() {
 
@@ -86,6 +90,13 @@ public class Investor {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 
     public Instant getCreationTimestamp() {
