@@ -205,7 +205,7 @@ class InvestorServiceTest {
     }
 
     @Nested
-    class deleteById{
+    class deleteInvestorById{
 
         @Test
         @DisplayName("Should delete investor by id with success, when investor user exists")
@@ -251,6 +251,36 @@ class InvestorServiceTest {
 
             verify(investorRepository, times(1)).existsById(uuidArgumentCaptor.getValue());
             verify(investorRepository, times(0)).deleteById(any());
+        }
+    }
+
+    @Nested
+    class updateInvestorById{
+        @Test
+        @DisplayName("Should get investor by Id with success. Optional is present case. ")
+        void shouldGetInvestorByIdWithSuccessOptionalPresent() {
+
+            //Arrange
+            var investor = new Investor(
+                    UUID.randomUUID(),
+                    "username",
+                    "myemail@email.com",
+                    "pass",
+                    "Investor Name",
+                    Instant.now(),
+                    null
+            );
+            doReturn(Optional.of(investor))
+                    .when(investorRepository)
+                    .findById(uuidArgumentCaptor
+                            .capture());
+
+            //Act
+            var output =  investorService.getInvestorById(investor.getInvestorId().toString());
+
+            //Assert
+            assertTrue(output.isPresent());
+            assertEquals(investor.getInvestorId(), uuidArgumentCaptor.getValue());
         }
     }
 }
