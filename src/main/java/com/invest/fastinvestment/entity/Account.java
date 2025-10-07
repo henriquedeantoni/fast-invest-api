@@ -23,6 +23,8 @@ public class Account {
     @JoinColumn(name="investor_id")
     private Investor investor;
 
+    @OneToOne(mappedBy="account")
+    @PrimaryKeyJoinColumn
     private BillAddress billAddress;
 
     public Account() {
