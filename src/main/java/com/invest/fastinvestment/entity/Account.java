@@ -2,6 +2,7 @@ package com.invest.fastinvestment.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +27,9 @@ public class Account {
     @OneToOne(mappedBy="account")
     @PrimaryKeyJoinColumn
     private BillAddress billAddress;
+
+    @OneToMany(mappedBy="account")
+    private List<AccountStock> accountStocks;
 
     public Account() {
     }
