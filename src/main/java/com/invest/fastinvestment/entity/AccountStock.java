@@ -71,10 +71,10 @@ public class AccountStock {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return purchasePrice;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setPrice(BigDecimal purchasePrice) {
+        this.purchasePrice = purchasePrice;
     }
 }
