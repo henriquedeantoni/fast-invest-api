@@ -4,6 +4,7 @@ import com.invest.fastinvestment.controller.dtos.CreateAccountDto;
 import com.invest.fastinvestment.controller.dtos.CreateInvestorDto;
 import com.invest.fastinvestment.controller.dtos.UpdateInvestorDto;
 import com.invest.fastinvestment.entity.Account;
+import com.invest.fastinvestment.entity.BillAddress;
 import com.invest.fastinvestment.entity.Investor;
 import com.invest.fastinvestment.exceptions.InvestorCreationException;
 import com.invest.fastinvestment.repository.AccountRepository;
@@ -106,6 +107,16 @@ public class    InvestorService {
         );
 
         var newAccountCreated = accountRepository.save(account);
-        
+
+        BillAddress billAddress = new BillAddress(
+            newAccountCreated.getAccountiD(),
+                account,
+                createAccountDto.city(),
+                createAccountDto.street(),
+                createAccountDto.number(),
+                createAccountDto.postalCode()
+        );
+
+        billAddressRepository.save(billAddress);
     }
 }
