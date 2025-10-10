@@ -1,7 +1,7 @@
 package com.invest.fastinvestment.service;
 
-import com.invest.fastinvestment.controller.CreateInvestorDto;
-import com.invest.fastinvestment.controller.UpdateInvestorDto;
+import com.invest.fastinvestment.controller.dtos.CreateInvestorDto;
+import com.invest.fastinvestment.controller.dtos.UpdateInvestorDto;
 import com.invest.fastinvestment.entity.Investor;
 import com.invest.fastinvestment.exceptions.InvestorCreationException;
 import com.invest.fastinvestment.repository.InvestorRepository;
@@ -14,7 +14,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
 import java.util.ArrayList;

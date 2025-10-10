@@ -1,4 +1,4 @@
-package com.invest.fastinvestment.controller;
+package com.invest.fastinvestment.controller.dtos;
 
 import java.io.Serializable;
 

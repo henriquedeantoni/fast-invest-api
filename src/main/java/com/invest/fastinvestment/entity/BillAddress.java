@@ -31,8 +31,9 @@ public class BillAddress {
     public BillAddress() {
     }
 
-    public BillAddress(UUID id, String city, String street, Integer number, String postalCode) {
+    public BillAddress(UUID id, Account account, String city, String street, Integer number, String postalCode) {
         this.id = id;
+        this.account = account;
         this.city = city;
         this.street = street;
         this.number = number;
