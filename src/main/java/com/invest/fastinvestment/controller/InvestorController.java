@@ -1,14 +1,15 @@
 package com.invest.fastinvestment.controller;
 
+import com.invest.fastinvestment.controller.dtos.CreateAccountDto;
+import com.invest.fastinvestment.controller.dtos.CreateInvestorDto;
+import com.invest.fastinvestment.controller.dtos.UpdateInvestorDto;
 import com.invest.fastinvestment.entity.Investor;
-import com.invest.fastinvestment.repository.InvestorRepository;
 import com.invest.fastinvestment.service.InvestorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/investors")
@@ -52,5 +53,14 @@ public class InvestorController {
     public ResponseEntity<Investor> deleteInvestorById(@PathVariable("investorId") String investorId){
         investorService.deleteInvestorById(investorId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{investorId}/accounts")
+    public ResponseEntity<Investor> createInvestorByAccountId(@PathVariable("investorId")  String investorId,
+                                                              @RequestBody CreateAccountDto createAccountDto){
+
+        investorService.createAccount(investorId, createAccountDto);
+
+        return ResponseEntity.ok().build();
     }
 }

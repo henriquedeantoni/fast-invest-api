@@ -34,10 +34,13 @@ public class Account {
     public Account() {
     }
 
-    public Account(UUID accountiD, String accountNumber, String description) {
+    public Account(UUID accountiD, String accountNumber, String description, Investor investor, BillAddress billAddress, List<AccountStock> accountStocks) {
         this.accountiD = accountiD;
         this.accountNumber = accountNumber;
         this.description = description;
+        this.investor = investor;
+        this.billAddress = billAddress;
+        this.accountStocks = accountStocks;
     }
 
     public UUID getAccountiD() {

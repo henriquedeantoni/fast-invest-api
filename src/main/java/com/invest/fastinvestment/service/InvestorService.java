@@ -1,13 +1,20 @@
 package com.invest.fastinvestment.service;
 
-import com.invest.fastinvestment.controller.CreateInvestorDto;
-import com.invest.fastinvestment.controller.UpdateInvestorDto;
+import com.invest.fastinvestment.controller.dtos.CreateAccountDto;
+import com.invest.fastinvestment.controller.dtos.CreateInvestorDto;
+import com.invest.fastinvestment.controller.dtos.UpdateInvestorDto;
+import com.invest.fastinvestment.entity.Account;
 import com.invest.fastinvestment.entity.Investor;
 import com.invest.fastinvestment.exceptions.InvestorCreationException;
+import com.invest.fastinvestment.repository.AccountRepository;
+import com.invest.fastinvestment.repository.BillAddressRepository;
 import com.invest.fastinvestment.repository.InvestorRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
@@ -16,9 +23,15 @@ import java.util.UUID;
 public class    InvestorService {
 
     private InvestorRepository investorRepository;
+    private AccountRepository accountRepository;
+    private BillAddressRepository billAddressRepository;
 
-    public InvestorService(InvestorRepository investorRepository) {
+    public InvestorService(InvestorRepository investorRepository,
+                           AccountRepository accountRepository,
+                           BillAddressRepository billAddressRepository) {
         this.investorRepository = investorRepository;
+        this.accountRepository = accountRepository;
+        this.billAddressRepository = billAddressRepository;
     }
 
     public UUID createInvestor(CreateInvestorDto dto) {
@@ -78,4 +91,21 @@ public class    InvestorService {
         }
     }
 
+    public void createAccount(String investorId, CreateAccountDto createAccountDto) {
+
+        var investor = investorRepository.findById(UUID.fromString(investorId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Investor Not Found"));
+
+        Account account = new Account(
+                UUID.randomUUID(),
+                createAccountDto.accountNumber(),
+                createAccountDto.description(),
+                investor,
+                null,
+                new ArrayList<>()
+        );
+
+        var newAccountCreated = accountRepository.save(account);
+        
+    }
 }
