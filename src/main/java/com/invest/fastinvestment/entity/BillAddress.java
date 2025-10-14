@@ -23,7 +23,7 @@ public class BillAddress {
     @Column(name="postalcode")
     private String postalCode;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
     @MapsId
     private Account account;

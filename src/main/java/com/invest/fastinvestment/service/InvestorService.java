@@ -119,4 +119,8 @@ public class    InvestorService {
 
         billAddressRepository.save(billAddress);
     }
+
+    public Object listAccounts(String investorId) {
+        
+    }
 }
