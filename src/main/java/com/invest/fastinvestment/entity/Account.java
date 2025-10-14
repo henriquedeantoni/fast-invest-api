@@ -1,6 +1,7 @@
 package com.invest.fastinvestment.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class Account {
     @JoinColumn(name="investor_id")
     private Investor investor;
 
-    @OneToOne(mappedBy="account")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy="account")
     @PrimaryKeyJoinColumn
     private BillAddress billAddress;
 
