@@ -1,5 +1,6 @@
 package com.invest.fastinvestment.controller;
 
+import com.invest.fastinvestment.controller.dtos.AccountResponseDto;
 import com.invest.fastinvestment.controller.dtos.CreateAccountDto;
 import com.invest.fastinvestment.controller.dtos.CreateInvestorDto;
 import com.invest.fastinvestment.controller.dtos.UpdateInvestorDto;
@@ -62,5 +63,13 @@ public class InvestorController {
         investorService.createAccount(investorId, createAccountDto);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{investorId}/accounts")
+    public ResponseEntity<List<AccountResponseDto>> createInvestorByAccountId(@PathVariable("investorId")  String investorId){
+
+        var accounts = investorService.listAccounts(investorId);
+
+        return ResponseEntity.ok(accounts);
     }
 }
